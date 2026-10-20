@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBK SERVICE - Devis Électricité</title>
+    <style>
+        :root {
+            --navy: #0f172a;
+            --navy-light: #1e293b;
+            --gold: #d4af37;
+            --gold-light: #fef08a;
+            --cyan: #38bdf8;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); }
+
+        /* Protection Overlay */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--navy); display: flex; justify-content: center; align-items: center;
+            z-index: 9999; color: white; padding: 20px;
+        }
+        .login-box {
+            background: var(--navy-light); padding: 30px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 350px;
+            border: 1px solid var(--gold);
+        }
+        .login-box h2 { margin-top: 0; color: var(--gold); }
+        .login-box input {
+            width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px;
+            border: 1px solid #334155; background: var(--navy); color: white;
+            font-size: 18px; text-align: center; outline: none;
+        }
+        .login-box button {
+            width: 100%; padding: 12px; border-radius: 8px; border: none;
+            background: var(--gold); color: var(--navy); font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        #error-msg { color: #f87171; margin-top: 10px; display: none; font-size: 14px; }
+
+        /* Container */
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--navy); }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); padding-bottom: 15px; margin-bottom: 20px; }
+        .brand h1 { margin: 0; color: var(--navy); font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+        .brand p { margin: 3px 0 0 0; color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .brand span { color: var(--gold); font-size: 11px; display: block; font-style: italic; }
+        .contact-badge { background: var(--navy); color: var(--gold); padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 13px; text-align: right; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        .form-group { margin-bottom: 8px; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 3px; color: #475569; text-transform: uppercase; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fff; }
+
+        /* Quick Add Category Bar */
+        .quick-section { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .quick-section label { font-size: 12px; font-weight: bold; color: var(--navy); display: block; margin-bottom: 5px; }
+        .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .select-cat { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; background: white; }
+        .btn-add-cat { background: var(--navy); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; }
+
+        /* Table */
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        th { background: #f1f5f9; color: var(--navy); font-weight: 700; }
+        
+        /* Stepper Quantity Control (No keyboard popup) */
+        .stepper { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; width: 90px; background: #fff; }
+        .stepper button { background: #f1f5f9; border: none; padding: 6px 10px; cursor: pointer; font-weight: bold; color: var(--navy); font-size: 14px; }
+        .stepper button:active { background: #cbd5e1; }
+        .stepper input { width: 30px; text-align: center; border: none; font-size: 13px; font-weight: bold; outline: none; -moz-appearance: textfield; }
+        .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* Displacement / Travel Cost Box */
+        .travel-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .travel-box h3 { margin: 0 0 8px 0; font-size: 13px; color: #1e40af; text-transform: uppercase; }
+        .travel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        @media (max-width: 600px) { .travel-grid { grid-template-columns: 1fr; } }
+
+        /* Totals */
+        .totals-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; border-top: 2px solid #e2e8f0; padding-top: 15px; }
+        .notes-area { flex: 1; margin-right: 20px; }
+        .notes-area textarea { width: 100%; height: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; }
+        .totals { width: 220px; text-align: right; }
+        .totals div { padding: 4px 0; font-size: 13px; }
+        .totals .final { font-size: 16px; font-weight: bold; color: var(--navy); border-top: 2px solid var(--navy); margin-top: 5px; padding-top: 5px; }
+
+        /* Actions Buttons */
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn-email { background: #0284c7; color: white; }
+        .btn-print { background: var(--navy); color: white; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; padding: 0; width: 100%; max-width: 100%; }
+            .no-print, #login-overlay { display: none !important; }
+            input, select, textarea { border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+            .stepper button { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>FBK SERVICE</h2>
+            <p style="color: #94a3b8; font-size: 13px;">Espace Sécurisé - Devis</p>
+            <input type="password" id="pass-input" placeholder="Code secret">
+            <button onclick="checkPassword()">Connexion</button>
+            <p id="error-msg">Mot de passe incorrect !</p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <h1>FBK SERVICE</h1>
+                <p>Dépannage & Électricité Générale</p>
+                <span>Votre électricité, notre priorité</span>
+            </div>
+            <div class="contact-badge">
+                Tél: 07 76 19 11 66<br>
+                <span style="font-size:11px; color:#cbd5e1;">Devis & Dépannage</span>
+            </div>
+        </div>
+
+        <!-- Client & Devis Infos -->
+        <div class="grid">
+            <div>
+                <strong style="font-size:12px; color:var(--navy);">COORDONNÉES CLIENT :</strong>
+                <div class="form-group" style="margin-top:5px;"><input type="text" id="client-name" placeholder="Nom du Client"></div>
+                <div class="form-group"><input type="text" id="client-address" placeholder="Adresse du chantier"></div>
+                <div class="form-group"><input type="text" id="client-phone" placeholder="Téléphone"></div>
+            </div>
+            <div>
+                <strong style="font-size:12px; color:var(--navy);">RÉFÉRENCES :</strong>
+                <div class="form-group" style="margin-top:5px;"><label>N° de Devis:</label><input type="text" id="devis-num" value="DEV-2026-001"></div>
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom:0;">
+                    <div class="form-group"><label>Date:</label><input type="date" id="devis-date"></div>
+                    <div class="form-group">
+                        <label>TVA:</label>
+                        <select id="tva-rate" onchange="calculateTotals()">
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="0">0% (Auto)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Add from Catalogue -->
+        <div class="no-print quick-section">
+            <label>⚡ Ajout rapide depuis le catalogue :</label>
+            <div class="quick-row">
+                <select id="catalogue-select" class="select-cat">
+                    <option value="">-- Choisir une prestation --</option>
+                </select>
+                <button class="btn-add-cat" onclick="addSelectedPrestation()">+ Ajouter</button>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prestation / Désignation</th>
+                        <th style="width: 80px;">Qté</th>
+                        <th style="width: 90px;">Prix U. HT</th>
+                        <th style="width: 90px;">Total HT</th>
+                        <th class="no-print" style="width: 30px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="items-body"></tbody>
+            </table>
+        </div>
+
+        <div class="no-print" style="margin-bottom: 15px;">
+            <button class="btn-add-cat" onclick="addItem('', 1, 0)" style="background: #e2e8f0; color: var(--navy);">+ Ligne libre</button>
+        </div>
+
+        <!-- Travel Cost Box (Déplacement) -->
+        <div class="travel-box">
+            <h3>🚗 Frais de Déplacement / Transport</h3>
+            <div class="travel-grid">
+                <div class="form-group" style="margin-bottom:0;"><label>Code Postal / Lieu:</label><input type="text" id="travel-loc" placeholder="Ex: 18200"></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Distance (km):</label><input type="number" id="travel-km" value="0" min="0" onchange="calculateTotals()"></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Tarif / km (€):</label><input type="number" id="travel-rate" value="0.50" step="0.1" onchange="calculateTotals()"></div>
+            </div>
+            <div style="text-align:right; margin-top:8px; font-size:13px; font-weight:bold; color:#1e40af;">
+                Total Déplacement : <span id="travel-total">0.00</span> €
+            </div>
+        </div>
+
+        <!-- Totals & Notes -->
+        <div class="totals-container">
+            <div class="notes-area no-print">
+                <label style="font-size:11px; font-weight:bold; color:var(--navy); display:block; margin-bottom:3px;">CONDITIONS & REMARQUES :</label>
+                <textarea placeholder="Validité du devis : 30 jours. Paiement à réception.">Devis établi par FBK SERVICE. Validité 30 jours. Un service rapide et de confiance.</textarea>
+            </div>
+            <div class="totals">
+                <div>Total Prestations: <span id="total-prestations">0.00</span> €</div>
+                <div>Déplacement: <span id="total-deplacement">0.00</span> €</div>
+                <div>Total HT: <span id="total-ht">0.00</span> €</div>
+                <div>TVA: <span id="total-tva">0.00</span> €</div>
+                <div class="final">Total TTC: <span id="total-ttc">0.00</span> €</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions no-print">
+            <button class="btn btn-whatsapp" onclick="sendWhatsApp()">💬 WhatsApp</button>
+            <button class="btn btn-email" onclick="sendEmail()">✉️ Email</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ PDF</button>
+        </div>
+    </div>
+
+    <script>
+        const SECRET_PASSWORD = "KFB";
+
+        function checkPassword() {
+            if (document.getElementById('pass-input').value === SECRET_PASSWORD) {
+                document.getElementById('login-overlay').style.display = 'none';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        document.getElementById('devis-date').valueAsDate = new Date();
+
+        // Catalogue Database
+        const catalogue = [
+            {cat: "Prises", name: "Pose prise existante", price: 25},
+            {cat: "Prises", name: "Création prise nouvelle", price: 40},
+            {cat: "Prises", name: "Pose interrupteur", price: 25},
+            {cat: "Prises", name: "Création interrupteur", price: 40},
+            {cat: "Prises", name: "Va-et-vient", price: 40},
+            {cat: "Prises", name: "Permutateur", price: 45},
+            {cat: "Éclairage", name: "Pose luminaire simple", price: 30},
+            {cat: "Éclairage", name: "Pose plafonnier", price: 35},
+            {cat: "Éclairage", name: "Pose applique murale", price: 30},
+            {cat: "Éclairage", name: "Pose spot encastré", price: 35},
+            {cat: "Éclairage", name: "Pose détecteur de mouvement", price: 35},
+            {cat: "Éclairage", name: "Pose sonnette", price: 40},
+            {cat: "Extérieur", name: "Pose prise extérieure", price: 45},
+            {cat: "Extérieur", name: "Pose interrupteur extérieur", price: 40},
+            {cat: "Extérieur", name: "Pose éclairage extérieur", price: 45},
+            {cat: "Remplacement", name: "Remplacement prise", price: 20},
+            {cat: "Remplacement", name: "Remplacement interrupteur", price: 20},
+            {cat: "Remplacement", name: "Remplacement luminaire", price: 25},
+            {cat: "Tableau", name: "Remplacement disjoncteur", price: 30},
+            {cat: "Tableau", name: "Remplacement contacteur jour/nuit", price: 45},
+            {cat: "Tableau", name: "Remplacement tableau électrique", price: 325},
+            {cat: "Tableau", name: "Ajout disjoncteur au tableau", price: 30},
+            {cat: "Tableau", name: "Repérage des circuits tableau", price: 100},
+            {cat: "Dépannage", name: "Recherche panne simple", price: 60},
+            {cat: "Dépannage", name: "Recherche panne complexe (Heure)", price: 50},
+            {cat: "Câblage", name: "Tirage câble dans gaine (m)", price: 3},
+            {cat: "Câblage", name: "Tirage câble difficile (m)", price: 5},
+            {cat: "Câblage", name: "Pose gaine ICTA apparente (m)", price: 4},
+            {cat: "Câblage", name: "Pose gaine ICTA encastrée (m)", price: 6},
+            {cat: "Câblage", name: "Création ligne électrique complète (m)", price: 10}
+        ];
+
+        // Populate Catalogue Dropdown
+        const catSelect = document.getElementById('catalogue-select');
+        catalogue.forEach(item => {
+            let opt = document.createElement('option');
+            opt.value = JSON.stringify(item);
+            opt.textContent = `[${item.cat}] ${item.name} - ${item.price}€`;
+            catSelect.appendChild(opt);
+        });
+
+        function addSelectedPrestation() {
+            const val = catSelect.value;
+            if(!val) return;
+            const item = JSON.parse(val);
+            addItem(item.name, 1, item.price);
+            catSelect.value = "";
+        }
+
+        function addItem(desc = '', qty = 1, price = 0) {
+            const body = document.getElementById('items-body');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" value="${desc}" placeholder="Description" style="width:100%;"></td>
+                <td>
+                    <div class="stepper">
+                        <button type="button" onclick="stepQty(this, -1)">-</button>
+                        <input type="number" value="${qty}" min="1" onchange="calculateTotals()">
+                        <button type="button" onclick="stepQty(this, 1)">+</button>
+                    </div>
+                </td>
+                <td><input type="number" value="${price}" step="0.01" onchange="calculateTotals()" style="width:100%;"></td>
+                <td class="row-total" style="font-weight:bold;">0.00 €</td>
+                <td class="no-print"><button onclick="this.closest('tr').remove(); calculateTotals();" style="border:none; background:none; color:red; cursor:pointer; font-size:16px;">&times;</button></td>
+            `;
+            body.appendChild(row);
+            calculateTotals();
+        }
+
+        function stepQty(btn, delta) {
+            const input = btn.parentElement.querySelector('input');
+            let val = parseInt(input.value) || 1;
+            val += delta;
+            if (val < 1) val = 1;
+            input.value = val;
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let totalPrestations = 0;
+            const rows = document.querySelectorAll('#items-body tr');
+            rows.forEach(row => {
+                const qty = parseInt(row.children[1].querySelector('input').value) || 0;
+                const price = parseFloat(row.children[2].querySelector('input').value) || 0;
+                const rowTotal = qty * price;
+                row.children[3].textContent = rowTotal.toFixed(2) + ' €';
+                totalPrestations += rowTotal;
+            });
+
+            // Travel calculation
+            const km = parseFloat(document.getElementById('travel-km').value) || 0;
+            const rate = parseFloat(document.getElementById('travel-rate').value) || 0;
+            const travelTotal = km * rate;
+            document.getElementById('travel-total').textContent = travelTotal.toFixed(2);
+            document.getElementById('total-deplacement').textContent = travelTotal.toFixed(2);
+            document.getElementById('total-prestations').textContent = totalPrestations.toFixed(2);
+
+            const totalHT = totalPrestations + travelTotal;
+            const tvaRate = parseFloat(document.getElementById('tva-rate').value) / 100;
+            const totalTVA = totalHT * tvaRate;
+            const totalTTC = totalHT + totalTVA;
+
+            document.getElementById('total-ht').textContent = totalHT.toFixed(2);
+            document.getElementById('total-tva').textContent = totalTVA.toFixed(2);
+            document.getElementById('total-ttc').textContent = totalTTC.toFixed(2);
+        }
+
+        function getDevisSummaryText() {
+            const name = document.getElementById('client-name').value || 'Client';
+            const num = document.getElementById('devis-num').value;
+            const ttc = document.getElementById('total-ttc').textContent;
+            return `*FBK SERVICE - DEVIS* %0A*N°:* ${num}%0A*Client:* ${name}%0A*Total TTC:* ${ttc}%0A*Tél:* 07 76 19 11 66`;
+        }
+
+        function sendWhatsApp() {
+            const text = getDevisSummaryText();
+            const phone = document.getElementById('client-phone').value.replace(/[^0-9]/g, '');
+            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+        }
+
+        function sendEmail() {
+            const num = document.getElementById('devis-num').value;
+            const ttc = document.getElementById('total-ttc').textContent;
+            const subject = encodeURIComponent(`Devis ${num} - FBK SERVICE`);
+            const body = encodeURIComponent(`Bonjour,\n\nVeuillez trouver ci-joint les détails de votre devis ${num} d'un montant total de ${ttc}.\n\nCordialement,\nFBK SERVICE\nTél: 07 76 19 11 66`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // Add initial sample item
+        addItem('Recherche panne simple', 1, 60);
+    </script>
+</body>
+</html>
