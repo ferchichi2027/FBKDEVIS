@@ -6,372 +6,642 @@
     <title>FBK SERVICE - Devis Électricité</title>
     <style>
         :root {
-            --navy: #0f172a;
-            --navy-light: #1e293b;
-            --gold: #d4af37;
-            --gold-light: #fef08a;
-            --cyan: #38bdf8;
-            --bg: #f8fafc;
-            --text: #1e293b;
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #0284c7;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #cbd5e1;
+            --danger: #ef4444;
         }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); }
 
-        /* Protection Overlay */
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--navy); display: flex; justify-content: center; align-items: center;
-            z-index: 9999; color: white; padding: 20px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 12px;
+            color: #334155;
         }
-        .login-box {
-            background: var(--navy-light); padding: 30px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 350px;
-            border: 1px solid var(--gold);
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            padding: 20px;
+            min-height: 85vh;
         }
-        .login-box h2 { margin-top: 0; color: var(--gold); }
-        .login-box input {
-            width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px;
-            border: 1px solid #334155; background: var(--navy); color: white;
-            font-size: 18px; text-align: center; outline: none;
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
-        .login-box button {
-            width: 100%; padding: 12px; border-radius: 8px; border: none;
-            background: var(--gold); color: var(--navy); font-size: 16px; font-weight: bold; cursor: pointer;
+
+        .header h1 {
+            color: var(--dark);
+            margin: 0;
+            font-size: 24px;
         }
-        #error-msg { color: #f87171; margin-top: 10px; display: none; font-size: 14px; }
 
-        /* Container */
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--navy); }
-        
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); padding-bottom: 15px; margin-bottom: 20px; }
-        .brand h1 { margin: 0; color: var(--navy); font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
-        .brand p { margin: 3px 0 0 0; color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        .brand span { color: var(--gold); font-size: 11px; display: block; font-style: italic; }
-        .contact-badge { background: var(--navy); color: var(--gold); padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 13px; text-align: right; }
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+        }
 
-        /* Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-        .form-group { margin-bottom: 8px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 3px; color: #475569; text-transform: uppercase; }
-        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fff; }
+        .login-screen input {
+            padding: 14px;
+            font-size: 18px;
+            width: 220px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+        }
 
-        /* Quick Add Category Bar */
-        .quick-section { background: #f8fafc; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
-        .quick-section label { font-size: 12px; font-weight: bold; color: var(--navy); display: block; margin-bottom: 5px; }
-        .quick-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .select-cat { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; background: white; }
-        .btn-add-cat { background: var(--navy); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-        /* Table */
-        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; min-width: 500px; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-        th { background: #f1f5f9; color: var(--navy); font-weight: 700; }
-        
-        /* Stepper Quantity Control (No keyboard popup) */
-        .stepper { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; width: 90px; background: #fff; }
-        .stepper button { background: #f1f5f9; border: none; padding: 6px 10px; cursor: pointer; font-weight: bold; color: var(--navy); font-size: 14px; }
-        .stepper button:active { background: #cbd5e1; }
-        .stepper input { width: 30px; text-align: center; border: none; font-size: 13px; font-weight: bold; outline: none; -moz-appearance: textfield; }
-        .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .btn:hover { background-color: var(--primary-dark); }
+        .btn-secondary { background-color: var(--secondary); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-back { background-color: #64748b; margin-bottom: 15px; }
 
-        /* Displacement / Travel Cost Box */
-        .travel-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-        .travel-box h3 { margin: 0 0 8px 0; font-size: 13px; color: #1e40af; text-transform: uppercase; }
-        .travel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        @media (max-width: 600px) { .travel-grid { grid-template-columns: 1fr; } }
+        /* Dashboard Main Grid (المربعات الثلاثة الخضراء) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin-top: 10px;
+        }
 
-        /* Totals */
-        .totals-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; border-top: 2px solid #e2e8f0; padding-top: 15px; }
-        .notes-area { flex: 1; margin-right: 20px; }
-        .notes-area textarea { width: 100%; height: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; }
-        .totals { width: 220px; text-align: right; }
-        .totals div { padding: 4px 0; font-size: 13px; }
-        .totals .final { font-size: 16px; font-weight: bold; color: var(--navy); border-top: 2px solid var(--navy); margin-top: 5px; padding-top: 5px; }
+        .dash-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 14px;
+            padding: 22px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-        /* Actions Buttons */
-        .actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-whatsapp { background: #25d366; color: white; }
-        .btn-email { background: #0284c7; color: white; }
-        .btn-print { background: var(--navy); color: white; }
+        .dash-card:active {
+            transform: scale(0.98);
+        }
+
+        .dash-card h2 {
+            margin: 0 0 6px 0;
+            color: white;
+            font-size: 20px;
+        }
+
+        .dash-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .dash-card .icon {
+            font-size: 36px;
+        }
+
+        /* Sections / Pages Styling */
+        .page-section {
+            display: none;
+        }
+
+        .service-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: var(--light);
+        }
+
+        .service-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .service-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .price-time-inputs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .price-time-inputs input {
+            width: 75px;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+        }
+
+        .qty-val {
+            font-size: 18px;
+            font-weight: bold;
+            width: 32px;
+            text-align: center;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .summary-box {
+            background: #fff;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .edit-toggle-btn {
+            background-color: #f59e0b;
+            color: white;
+            padding: 8px 14px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
 
         @media print {
+            .no-print { display: none !important; }
             body { background: white; padding: 0; }
-            .container { box-shadow: none; border: none; padding: 0; width: 100%; max-width: 100%; }
-            .no-print, #login-overlay { display: none !important; }
-            input, select, textarea { border: none !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; }
-            .stepper button { display: none; }
+            .container { box-shadow: none; border: none; }
+            .page-section { display: block !important; }
+            #mainMenu, #pageServices, #pageDistance { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Login Overlay -->
-    <div id="login-overlay">
-        <div class="login-box">
-            <h2>FBK SERVICE</h2>
-            <p style="color: #94a3b8; font-size: 13px;">Espace Sécurisé - Devis</p>
-            <input type="password" id="pass-input" placeholder="Code secret">
-            <button onclick="checkPassword()">Connexion</button>
-            <p id="error-msg">Mot de passe incorrect !</p>
-        </div>
+<div class="container">
+    <!-- 1. شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="login-screen">
+        <h2>FBK SERVICE</h2>
+        <p>Entrez le code d'accès :</p>
+        <input type="password" id="passCode" placeholder="Code (KFB)">
+        <button class="btn" onclick="checkCode()">Connexion</button>
+        <p id="errorMsg" style="color:red; display:none; margin-top:10px;">Code incorrect!</p>
     </div>
 
-    <!-- Main App Container -->
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="brand">
-                <h1>FBK SERVICE</h1>
-                <p>Dépannage & Électricité Générale</p>
-                <span>Votre électricité, notre priorité</span>
-            </div>
-            <div class="contact-badge">
-                Tél: 07 76 19 11 66<br>
-                <span style="font-size:11px; color:#cbd5e1;">Devis & Dépannage</span>
-            </div>
-        </div>
+    <!-- 2. التطبيق الرئيسي -->
+    <div id="appScreen" style="display: none;">
 
-        <!-- Client & Devis Infos -->
-        <div class="grid">
-            <div>
-                <strong style="font-size:12px; color:var(--navy);">COORDONNÉES CLIENT :</strong>
-                <div class="form-group" style="margin-top:5px;"><input type="text" id="client-name" placeholder="Nom du Client"></div>
-                <div class="form-group"><input type="text" id="client-address" placeholder="Adresse du chantier"></div>
-                <div class="form-group"><input type="text" id="client-phone" placeholder="Téléphone"></div>
+        <!-- القائمة الرئيسية (3 المربعات الخضراء) -->
+        <div id="mainMenu">
+            <div class="header">
+                <h1>FBK SERVICE</h1>
+                <p style="margin: 5px 0 0 0; color: #64748b;">Tableau de Bord - Devis Rapide</p>
             </div>
-            <div>
-                <strong style="font-size:12px; color:var(--navy);">RÉFÉRENCES :</strong>
-                <div class="form-group" style="margin-top:5px;"><label>N° de Devis:</label><input type="text" id="devis-num" value="DEV-2026-001"></div>
-                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom:0;">
-                    <div class="form-group"><label>Date:</label><input type="date" id="devis-date"></div>
-                    <div class="form-group">
-                        <label>TVA:</label>
-                        <select id="tva-rate" onchange="calculateTotals()">
-                            <option value="10">10%</option>
-                            <option value="20">20%</option>
-                            <option value="0">0% (Auto)</option>
-                        </select>
+
+            <div class="dashboard-grid">
+                <!-- المربع 1 -->
+                <div class="dash-card" onclick="showPage('pageServices')">
+                    <div>
+                        <h2>1. Prestations & Services</h2>
+                        <p>Choix des travaux, options & modification des prix/temps</p>
                     </div>
+                    <div class="icon">⚡</div>
+                </div>
+
+                <!-- المربع 2 -->
+                <div class="dash-card" onclick="showPage('pageDistance')">
+                    <div>
+                        <h2>2. Déplacement & Localisation</h2>
+                        <p>Calcul par Code Postal / Commune (Rayon 50 km)</p>
+                    </div>
+                    <div class="icon">🚗</div>
+                </div>
+
+                <!-- المربع 3 -->
+                <div class="dash-card" onclick="showPage('pageDevis')">
+                    <div>
+                        <h2>3. Devis Final Client</h2>
+                        <p>Récapitulatif total, WhatsApp, E-mail & Impression</p>
+                    </div>
+                    <div class="icon">📄</div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Add from Catalogue -->
-        <div class="no-print quick-section">
-            <label>⚡ Ajout rapide depuis le catalogue :</label>
-            <div class="quick-row">
-                <select id="catalogue-select" class="select-cat">
-                    <option value="">-- Choisir une prestation --</option>
+        <!-- صفحة 1: الخدمات والتوقيت -->
+        <div id="pageServices" class="page-section">
+            <button class="btn btn-back no-print" onclick="showPage('mainMenu')">⬅️ Menu Principal</button>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Liste des Prestations</h2>
+                <button class="edit-toggle-btn" id="lockBtn" onclick="toggleEditMode()">🔒 Mode Édition : Désactivé</button>
+            </div>
+
+            <!-- إضافة خدمة مخصصة -->
+            <div style="background: #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 15px;" class="no-print">
+                <h4 style="margin:0 0 8px 0;">➕ Ajouter un service personnalisé</h4>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <input type="text" id="customName" placeholder="Nom du service" style="flex:2; min-width:150px;">
+                    <input type="number" id="customPrice" placeholder="Prix (€)" style="width:75px;">
+                    <input type="number" id="customTime" placeholder="Min" style="width:65px;">
+                    <button class="btn" style="padding: 8px 12px;" onclick="addCustomService()">Ajouter</button>
+                </div>
+            </div>
+
+            <div id="servicesList"></div>
+        </div>
+
+        <!-- صفحة 2: التنقل والرمز البريدي -->
+        <div id="pageDistance" class="page-section">
+            <button class="btn btn-back no-print" onclick="showPage('mainMenu')">⬅️ Menu Principal</button>
+            <h2>Déplacement & Distance (Saint-Amand-Montrond)</h2>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border); padding: 16px; border-radius: 10px;">
+                <label style="font-weight: bold;">Code Postal (Secteur 50 km) :</label>
+                <input type="text" id="cpInput" placeholder="Ex: 18200, 18000, 18210..." oninput="updateCitiesList()" style="margin-top: 6px; margin-bottom: 12px;">
+
+                <label style="font-weight: bold;">Ville / Commune (ou Code Postal global) :</label>
+                <select id="citySelect" onchange="calculateDistance()" style="margin-top: 6px;">
+                    <option value="">-- Saisir le Code Postal d'abord --</option>
                 </select>
-                <button class="btn-add-cat" onclick="addSelectedPrestation()">+ Ajouter</button>
+
+                <div id="distanceInfo" style="font-weight: bold; color: var(--primary-dark); margin-top: 15px; font-size: 16px;"></div>
             </div>
         </div>
 
-        <!-- Items Table -->
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Prestation / Désignation</th>
-                        <th style="width: 80px;">Qté</th>
-                        <th style="width: 90px;">Prix U. HT</th>
-                        <th style="width: 90px;">Total HT</th>
-                        <th class="no-print" style="width: 30px;"></th>
-                    </tr>
-                </thead>
-                <tbody id="items-body"></tbody>
-            </table>
-        </div>
+        <!-- صفحة 3: الـ Devis النهائي للزبون -->
+        <div id="pageDevis" class="page-section">
+            <button class="btn btn-back no-print" onclick="showPage('mainMenu')">⬅️ Menu Principal</button>
+            
+            <div class="summary-box">
+                <div style="text-align: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 10px;">
+                    <h2 style="margin: 0; color: var(--primary-dark);">FBK SERVICE</h2>
+                    <p style="margin: 3px 0 0 0; font-size: 14px; color: #64748b;">Électricité & Dépannage - Saint-Amand-Montrond</p>
+                </div>
 
-        <div class="no-print" style="margin-bottom: 15px;">
-            <button class="btn-add-cat" onclick="addItem('', 1, 0)" style="background: #e2e8f0; color: var(--navy);">+ Ligne libre</button>
-        </div>
+                <h3>Récapitulatif des Prestations</h3>
+                <div id="devisDetails">Aucun service sélectionné.</div>
+                <hr>
 
-        <!-- Travel Cost Box (Déplacement) -->
-        <div class="travel-box">
-            <h3>🚗 Frais de Déplacement / Transport</h3>
-            <div class="travel-grid">
-                <div class="form-group" style="margin-bottom:0;"><label>Code Postal / Lieu:</label><input type="text" id="travel-loc" placeholder="Ex: 18200"></div>
-                <div class="form-group" style="margin-bottom:0;"><label>Distance (km):</label><input type="number" id="travel-km" value="0" min="0" onchange="calculateTotals()"></div>
-                <div class="form-group" style="margin-bottom:0;"><label>Tarif / km (€):</label><input type="number" id="travel-rate" value="0.50" step="0.1" onchange="calculateTotals()"></div>
-            </div>
-            <div style="text-align:right; margin-top:8px; font-size:13px; font-weight:bold; color:#1e40af;">
-                Total Déplacement : <span id="travel-total">0.00</span> €
-            </div>
-        </div>
+                <div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 6px;">
+                    <span>Temps total d'intervention :</span>
+                    <strong id="totalTime">0 h 0 min</strong>
+                </div>
 
-        <!-- Totals & Notes -->
-        <div class="totals-container">
-            <div class="notes-area no-print">
-                <label style="font-size:11px; font-weight:bold; color:var(--navy); display:block; margin-bottom:3px;">CONDITIONS & REMARQUES :</label>
-                <textarea placeholder="Validité du devis : 30 jours. Paiement à réception.">Devis établi par FBK SERVICE. Validité 30 jours. Un service rapide et de confiance.</textarea>
+                <div style="display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 6px;">
+                    <span>Frais de Déplacement (0.80€/km A/R) :</span>
+                    <strong id="travelFee">0.00 €</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; color: var(--primary-dark); margin-top: 12px; background: #ecfdf5; padding: 10px; border-radius: 8px;">
+                    <span>TOTAL TTC :</span>
+                    <span id="grandTotal">0.00 €</span>
+                </div>
             </div>
-            <div class="totals">
-                <div>Total Prestations: <span id="total-prestations">0.00</span> €</div>
-                <div>Déplacement: <span id="total-deplacement">0.00</span> €</div>
-                <div>Total HT: <span id="total-ht">0.00</span> €</div>
-                <div>TVA: <span id="total-tva">0.00</span> €</div>
-                <div class="final">Total TTC: <span id="total-ttc">0.00</span> €</div>
+
+            <div class="no-print" style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <button class="btn" style="background-color: #25D366; flex:1;" onclick="sendWhatsApp()">📱 WhatsApp</button>
+                <button class="btn btn-secondary" style="flex:1;" onclick="sendEmail()">📧 E-mail</button>
+                <button class="btn btn-danger" style="flex:1;" onclick="window.print()">📄 Imprimer / PDF</button>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="actions no-print">
-            <button class="btn btn-whatsapp" onclick="sendWhatsApp()">💬 WhatsApp</button>
-            <button class="btn btn-email" onclick="sendEmail()">✉️ Email</button>
-            <button class="btn btn-print" onclick="window.print()">🖨️ PDF</button>
-        </div>
     </div>
+</div>
 
-    <script>
-        const SECRET_PASSWORD = "KFB";
+<script>
+    const SECRET_CODE = "KFB";
+    const COST_PER_KM = 0.80;
+    let isEditMode = false;
+    let currentDistance = 0;
 
-        function checkPassword() {
-            if (document.getElementById('pass-input').value === SECRET_PASSWORD) {
-                document.getElementById('login-overlay').style.display = 'none';
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
+    const CITIES_DB = {
+        "18200": {
+            defaultKm: 5,
+            cities: [
+                { name: "Saint-Amand-Montrond (Centre)", km: 0 },
+                { name: "Orval", km: 3 },
+                { name: "Bouzais / La Groutte", km: 5 },
+                { name: "Saint-Georges-de-Poisieux / Drevant", km: 6 },
+                { name: "Bruère-Allichamps / Colombiers", km: 8 },
+                { name: "Meillant", km: 10 },
+                { name: "Ainay-le-Vieil", km: 11 },
+                { name: "Coust", km: 14 }
+            ]
+        },
+        "18210": {
+            defaultKm: 12,
+            cities: [
+                { name: "Saint-Pierre-les-Étieux", km: 9 },
+                { name: "Charenton-du-Cher", km: 11 },
+                { name: "Thaumiers", km: 18 }
+            ]
+        },
+        "18170": {
+            defaultKm: 15,
+            cities: [
+                { name: "Marçais", km: 12 },
+                { name: "Loye-sur-Arnon", km: 13 },
+                { name: "Le Châtelet", km: 22 }
+            ]
+        },
+        "18190": {
+            defaultKm: 15,
+            cities: [
+                { name: "Uzay-le-Venon", km: 11 },
+                { name: "Châteauneuf-sur-Cher", km: 22 }
+            ]
+        },
+        "18130": {
+            defaultKm: 28,
+            cities: [
+                { name: "Dun-sur-Auron", km: 26 },
+                { name: "Bussy", km: 30 }
+            ]
+        },
+        "18360": {
+            defaultKm: 18,
+            cities: [
+                { name: "Saulzais-le-Potier", km: 15 },
+                { name: "Vesdun", km: 21 }
+            ]
+        },
+        "03190": {
+            defaultKm: 25,
+            cities: [
+                { name: "Vallon-en-Sully", km: 25 },
+                { name: "Hérisson", km: 24 }
+            ]
+        },
+        "18000": {
+            defaultKm: 42,
+            cities: [
+                { name: "Bourges (Centre / Sud)", km: 45 },
+                { name: "Plaimpied-Givaudins", km: 38 }
+            ]
         }
+    };
 
-        document.getElementById('devis-date').valueAsDate = new Date();
+    let services = [
+        { id: 1, name: "Prise électrique - Pose neuve / Remplacement", price: 35, timeMin: 30, qty: 0 },
+        { id: 2, name: "Interrupteur Simple / Va-et-Vient", price: 30, timeMin: 25, qty: 0 },
+        { id: 3, name: "Point lumineux / Lustre / Spots LED", price: 40, timeMin: 35, qty: 0 },
+        { id: 4, name: "Tableau électrique (Monophasé / Triphasé)", price: 450, timeMin: 240, qty: 0 },
+        { id: 5, name: "Disjoncteur différentiel (Ajout/Remplacement)", price: 65, timeMin: 45, qty: 0 },
+        { id: 6, name: "Passage câble (Goulotte / Encastré avec saignée)", price: 15, timeMin: 30, qty: 0 },
+        { id: 7, name: "Recherche de panne / Diagnostic", price: 60, timeMin: 60, qty: 0 }
+    ];
 
-        // Catalogue Database
-        const catalogue = [
-            {cat: "Prises", name: "Pose prise existante", price: 25},
-            {cat: "Prises", name: "Création prise nouvelle", price: 40},
-            {cat: "Prises", name: "Pose interrupteur", price: 25},
-            {cat: "Prises", name: "Création interrupteur", price: 40},
-            {cat: "Prises", name: "Va-et-vient", price: 40},
-            {cat: "Prises", name: "Permutateur", price: 45},
-            {cat: "Éclairage", name: "Pose luminaire simple", price: 30},
-            {cat: "Éclairage", name: "Pose plafonnier", price: 35},
-            {cat: "Éclairage", name: "Pose applique murale", price: 30},
-            {cat: "Éclairage", name: "Pose spot encastré", price: 35},
-            {cat: "Éclairage", name: "Pose détecteur de mouvement", price: 35},
-            {cat: "Éclairage", name: "Pose sonnette", price: 40},
-            {cat: "Extérieur", name: "Pose prise extérieure", price: 45},
-            {cat: "Extérieur", name: "Pose interrupteur extérieur", price: 40},
-            {cat: "Extérieur", name: "Pose éclairage extérieur", price: 45},
-            {cat: "Remplacement", name: "Remplacement prise", price: 20},
-            {cat: "Remplacement", name: "Remplacement interrupteur", price: 20},
-            {cat: "Remplacement", name: "Remplacement luminaire", price: 25},
-            {cat: "Tableau", name: "Remplacement disjoncteur", price: 30},
-            {cat: "Tableau", name: "Remplacement contacteur jour/nuit", price: 45},
-            {cat: "Tableau", name: "Remplacement tableau électrique", price: 325},
-            {cat: "Tableau", name: "Ajout disjoncteur au tableau", price: 30},
-            {cat: "Tableau", name: "Repérage des circuits tableau", price: 100},
-            {cat: "Dépannage", name: "Recherche panne simple", price: 60},
-            {cat: "Dépannage", name: "Recherche panne complexe (Heure)", price: 50},
-            {cat: "Câblage", name: "Tirage câble dans gaine (m)", price: 3},
-            {cat: "Câblage", name: "Tirage câble difficile (m)", price: 5},
-            {cat: "Câblage", name: "Pose gaine ICTA apparente (m)", price: 4},
-            {cat: "Câblage", name: "Pose gaine ICTA encastrée (m)", price: 6},
-            {cat: "Câblage", name: "Création ligne électrique complète (m)", price: 10}
-        ];
+    function checkCode() {
+        const input = document.getElementById("passCode").value;
+        if (input === SECRET_CODE) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appScreen").style.display = "block";
+            renderServices();
+        } else {
+            document.getElementById("errorMsg").style.display = "block";
+        }
+    }
 
-        // Populate Catalogue Dropdown
-        const catSelect = document.getElementById('catalogue-select');
-        catalogue.forEach(item => {
-            let opt = document.createElement('option');
-            opt.value = JSON.stringify(item);
-            opt.textContent = `[${item.cat}] ${item.name} - ${item.price}€`;
-            catSelect.appendChild(opt);
+    function showPage(pageId) {
+        document.getElementById("mainMenu").style.display = "none";
+        document.getElementById("pageServices").style.display = "none";
+        document.getElementById("pageDistance").style.display = "none";
+        document.getElementById("pageDevis").style.display = "none";
+
+        document.getElementById(pageId).style.display = "block";
+        calculateSummary();
+    }
+
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const btn = document.getElementById("lockBtn");
+        btn.innerText = isEditMode ? "🔓 Mode Édition : Activé" : "🔒 Mode Édition : Désactivé";
+        btn.style.backgroundColor = isEditMode ? "#ef4444" : "#f59e0b";
+        renderServices();
+    }
+
+    function renderServices() {
+        const listContainer = document.getElementById("servicesList");
+        listContainer.innerHTML = "";
+
+        services.forEach(s => {
+            const card = document.createElement("div");
+            card.className = "service-card";
+            card.innerHTML = `
+                <div class="service-title">${s.name}</div>
+                <div class="service-controls">
+                    <div class="price-time-inputs">
+                        <label style="font-size:12px;">Prix (€):</label>
+                        <input type="number" value="${s.price}" ${!isEditMode ? 'disabled' : ''} onchange="updateServicePrice(${s.id}, this.value)">
+                        <label style="font-size:12px;">Min:</label>
+                        <input type="number" value="${s.timeMin}" ${!isEditMode ? 'disabled' : ''} onchange="updateServiceTime(${s.id}, this.value)">
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="changeQty(${s.id}, -1)">-</button>
+                        <span class="qty-val">${s.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${s.id}, 1)">+</button>
+                    </div>
+                </div>
+            `;
+            listContainer.appendChild(card);
         });
 
-        function addSelectedPrestation() {
-            const val = catSelect.value;
-            if(!val) return;
-            const item = JSON.parse(val);
-            addItem(item.name, 1, item.price);
-            catSelect.value = "";
+        calculateSummary();
+    }
+
+    function updateServicePrice(id, val) {
+        const s = services.find(x => x.id === id);
+        if (s) s.price = parseFloat(val) || 0;
+        calculateSummary();
+    }
+
+    function updateServiceTime(id, val) {
+        const s = services.find(x => x.id === id);
+        if (s) s.timeMin = parseInt(val) || 0;
+        calculateSummary();
+    }
+
+    function changeQty(id, delta) {
+        const s = services.find(x => x.id === id);
+        if (s) {
+            s.qty = Math.max(0, s.qty + delta);
+            renderServices();
+        }
+    }
+
+    function addCustomService() {
+        const name = document.getElementById("customName").value.trim();
+        const price = parseFloat(document.getElementById("customPrice").value) || 0;
+        const time = parseInt(document.getElementById("customTime").value) || 30;
+
+        if (!name) {
+            alert("Veuillez entrer un nom de service.");
+            return;
         }
 
-        function addItem(desc = '', qty = 1, price = 0) {
-            const body = document.getElementById('items-body');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><input type="text" value="${desc}" placeholder="Description" style="width:100%;"></td>
-                <td>
-                    <div class="stepper">
-                        <button type="button" onclick="stepQty(this, -1)">-</button>
-                        <input type="number" value="${qty}" min="1" onchange="calculateTotals()">
-                        <button type="button" onclick="stepQty(this, 1)">+</button>
-                    </div>
-                </td>
-                <td><input type="number" value="${price}" step="0.01" onchange="calculateTotals()" style="width:100%;"></td>
-                <td class="row-total" style="font-weight:bold;">0.00 €</td>
-                <td class="no-print"><button onclick="this.closest('tr').remove(); calculateTotals();" style="border:none; background:none; color:red; cursor:pointer; font-size:16px;">&times;</button></td>
-            `;
-            body.appendChild(row);
-            calculateTotals();
-        }
+        const newId = services.length + 1;
+        services.push({ id: newId, name: name, price: price, timeMin: time, qty: 1 });
 
-        function stepQty(btn, delta) {
-            const input = btn.parentElement.querySelector('input');
-            let val = parseInt(input.value) || 1;
-            val += delta;
-            if (val < 1) val = 1;
-            input.value = val;
-            calculateTotals();
-        }
+        document.getElementById("customName").value = "";
+        document.getElementById("customPrice").value = "";
+        document.getElementById("customTime").value = "";
 
-        function calculateTotals() {
-            let totalPrestations = 0;
-            const rows = document.querySelectorAll('#items-body tr');
-            rows.forEach(row => {
-                const qty = parseInt(row.children[1].querySelector('input').value) || 0;
-                const price = parseFloat(row.children[2].querySelector('input').value) || 0;
-                const rowTotal = qty * price;
-                row.children[3].textContent = rowTotal.toFixed(2) + ' €';
-                totalPrestations += rowTotal;
+        renderServices();
+    }
+
+    function updateCitiesList() {
+        const cp = document.getElementById("cpInput").value.trim();
+        const citySelect = document.getElementById("citySelect");
+        citySelect.innerHTML = "";
+
+        if (CITIES_DB[cp]) {
+            citySelect.innerHTML = `<option value="">-- Choisir la commune ou Code Postal global --</option>`;
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = CITIES_DB[cp].defaultKm;
+            defaultOpt.innerText = `📌 Autre commune (CP ${cp} : ~${CITIES_DB[cp].defaultKm} km)`;
+            citySelect.appendChild(defaultOpt);
+
+            CITIES_DB[cp].cities.forEach(city => {
+                const opt = document.createElement("option");
+                opt.value = city.km;
+                opt.innerText = `${city.name} (~${city.km} km)`;
+                citySelect.appendChild(opt);
             });
+        } else if (cp.length === 5) {
+            citySelect.innerHTML = `<option value="30">📌 Code Postal ${cp} (Point le plus proche : ~30 km)</option>`;
+        } else {
+            citySelect.innerHTML = `<option value="">-- Saisir un Code Postal valide (ex: 18200) --</option>`;
+        }
+        calculateDistance();
+    }
 
-            // Travel calculation
-            const km = parseFloat(document.getElementById('travel-km').value) || 0;
-            const rate = parseFloat(document.getElementById('travel-rate').value) || 0;
-            const travelTotal = km * rate;
-            document.getElementById('travel-total').textContent = travelTotal.toFixed(2);
-            document.getElementById('total-deplacement').textContent = travelTotal.toFixed(2);
-            document.getElementById('total-prestations').textContent = totalPrestations.toFixed(2);
+    function calculateDistance() {
+        const citySelect = document.getElementById("citySelect");
+        const selectedVal = citySelect.value;
+        const distInfo = document.getElementById("distanceInfo");
 
-            const totalHT = totalPrestations + travelTotal;
-            const tvaRate = parseFloat(document.getElementById('tva-rate').value) / 100;
-            const totalTVA = totalHT * tvaRate;
-            const totalTTC = totalHT + totalTVA;
+        if (selectedVal !== "") {
+            currentDistance = parseFloat(selectedVal);
+            const textCity = citySelect.options[citySelect.selectedIndex].text;
+            distInfo.innerText = `Distance aller simple : ${currentDistance} km (${textCity})`;
+        } else {
+            currentDistance = 0;
+            distInfo.innerText = "";
+        }
+        calculateSummary();
+    }
 
-            document.getElementById('total-ht').textContent = totalHT.toFixed(2);
-            document.getElementById('total-tva').textContent = totalTVA.toFixed(2);
-            document.getElementById('total-ttc').textContent = totalTTC.toFixed(2);
+    function calculateSummary() {
+        let totalServicesCost = 0;
+        let totalMinutes = 0;
+        let detailsHtml = "";
+
+        const selectedServices = services.filter(s => s.qty > 0);
+
+        if (selectedServices.length === 0) {
+            document.getElementById("devisDetails").innerHTML = "<em>Aucun service sélectionné.</em>";
+        } else {
+            detailsHtml = "<ul style='padding-left:20px; margin:5px 0;'>";
+            selectedServices.forEach(s => {
+                const linePrice = s.price * s.qty;
+                const lineTime = s.timeMin * s.qty;
+                totalServicesCost += linePrice;
+                totalMinutes += lineTime;
+
+                detailsHtml += `<li><strong>${s.qty}x</strong> ${s.name} : ${linePrice.toFixed(2)} € <small>(${lineTime} min)</small></li>`;
+            });
+            detailsHtml += "</ul>";
+            document.getElementById("devisDetails").innerHTML = detailsHtml;
         }
 
-        function getDevisSummaryText() {
-            const name = document.getElementById('client-name').value || 'Client';
-            const num = document.getElementById('devis-num').value;
-            const ttc = document.getElementById('total-ttc').textContent;
-            return `*FBK SERVICE - DEVIS* %0A*N°:* ${num}%0A*Client:* ${name}%0A*Total TTC:* ${ttc}%0A*Tél:* 07 76 19 11 66`;
-        }
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+        document.getElementById("totalTime").innerText = `${hours} h ${mins} min`;
 
-        function sendWhatsApp() {
-            const text = getDevisSummaryText();
-            const phone = document.getElementById('client-phone').value.replace(/[^0-9]/g, '');
-            window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
-        }
+        const travelCost = (currentDistance * 2) * COST_PER_KM;
+        document.getElementById("travelFee").innerText = `${travelCost.toFixed(2)} € (${currentDistance * 2} km A/R)`;
 
-        function sendEmail() {
-            const num = document.getElementById('devis-num').value;
-            const ttc = document.getElementById('total-ttc').textContent;
-            const subject = encodeURIComponent(`Devis ${num} - FBK SERVICE`);
-            const body = encodeURIComponent(`Bonjour,\n\nVeuillez trouver ci-joint les détails de votre devis ${num} d'un montant total de ${ttc}.\n\nCordialement,\nFBK SERVICE\nTél: 07 76 19 11 66`);
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        }
+        const grandTotal = totalServicesCost + travelCost;
+        document.getElementById("grandTotal").innerText = `${grandTotal.toFixed(2)} €`;
+    }
 
-        // Add initial sample item
-        addItem('Recherche panne simple', 1, 60);
-    </script>
+    function generateTextSummary() {
+        let txt = "📋 *DEVIS FBK SERVICE*\n\n";
+        services.filter(s => s.qty > 0).forEach(s => {
+            txt += `• ${s.qty}x ${s.name} : ${(s.price * s.qty).toFixed(2)}€\n`;
+        });
+        txt += `\n⏱️ Temps estimé : ${document.getElementById("totalTime").innerText}`;
+        txt += `\n🚗 Déplacement : ${document.getElementById("travelFee").innerText}`;
+        txt += `\n💰 *TOTAL TTC : ${document.getElementById("grandTotal").innerText}*`;
+        return encodeURIComponent(txt);
+    }
+
+    function sendWhatsApp() {
+        const text = generateTextSummary();
+        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function sendEmail() {
+        const text = generateTextSummary();
+        window.location.href = `mailto:?subject=Devis FBK Service&body=${text}`;
+    }
+</script>
+
 </body>
 </html>
